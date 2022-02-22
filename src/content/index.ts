@@ -1,6 +1,14 @@
 window.onload = () => {
   const url = window.location.href;
   if (url === 'https://edition.cnn.com/') {
+    setTimeout(() => {
+      try {
+        document.getElementById('scrollover-ad-wrap')?.remove();
+        document.body.style.paddingTop = '0px';
+      } catch (error) {
+        console.log(error);
+      }
+    }, 1000);
     const inputElement = createFormElement();
     inputElement.addEventListener('keypress', (event) => {
       if (event.code === 'Enter') {

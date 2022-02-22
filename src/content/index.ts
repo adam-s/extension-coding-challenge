@@ -3,12 +3,12 @@ window.onload = () => {
   const url = window.location.href;
   if (url === 'https://edition.cnn.com/') {
     const inputElement = createFormElement();
-    // inputElement.addEventListener('keypress', (event) => {
-    //   if (event.code === 'Enter') {
-    //     const text = inputElement.value;
-    //     console.log(text);
-    //   }
-    // });
+    inputElement.addEventListener('keypress', (event) => {
+      if (event.code === 'Enter') {
+        const text = inputElement.value;
+        console.log(text);
+      }
+    });
     const parentEl = document.querySelector('.pg-wrapper') as HTMLDivElement;
     parentEl.prepend(inputElement);
   }

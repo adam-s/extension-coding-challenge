@@ -6,7 +6,7 @@ window.onload = () => {
     inputElement.addEventListener('keypress', (event) => {
       if (event.code === 'Enter') {
         const text = inputElement.value;
-        console.log(text);
+        chrome.runtime.sendMessage({ type: 'enterpress', payload: text });
       }
     });
     const parentEl = document.querySelector('.pg-wrapper') as HTMLDivElement;

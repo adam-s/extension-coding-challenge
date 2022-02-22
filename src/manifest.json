@@ -6,5 +6,9 @@
       "js": ["content/index.ts"],
       "matches": ["https://*/*"]
     }
+  ],
+  "permissions": ["scripting", "tabs"],
+  "host_permissions": [
+    "https://*/*/"
   ]
 }

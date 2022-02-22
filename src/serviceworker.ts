@@ -1,4 +1,3 @@
-console.log('service worker');
 type Result = { id: number; containsString: boolean };
 
 const setTitle = (text: string) => {
@@ -7,9 +6,7 @@ const setTitle = (text: string) => {
 chrome.runtime.onMessage.addListener((event) => {
   if (event.type === 'enterpress') {
     const text = event.payload;
-    console.log(event);
     chrome.tabs.query({}, async (tabs) => {
-      console.log(tabs);
       let count = tabs.length;
       const values = new Promise<Result[]>((resolve) => {
         const results: Result[] = [];

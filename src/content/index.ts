@@ -1,5 +1,4 @@
 window.onload = () => {
-  console.log(window.location.href);
   const url = window.location.href;
   if (url === 'https://edition.cnn.com/') {
     const inputElement = createFormElement();

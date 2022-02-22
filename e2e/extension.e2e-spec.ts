@@ -2,27 +2,43 @@ import puppeteer from 'puppeteer';
 import { bootstrap } from './bootstrap';
 
 describe('Extension e2e', () => {
-  let appPage: puppeteer.Page;
+  let appPages: Record<string, puppeteer.Page>;
   let browser: puppeteer.Browser;
   let extensionTarget: puppeteer.Target;
 
-  const URL =
-    'https://docs.google.com/document/d/1Z0IxO8x8B2xCrdSQ4KykAU3nVxtOf6KRLNR9_O7sEcQ/edit';
   beforeAll(async () => {
-    const context = await bootstrap({
-      appUrl: URL /*, slowMo: 50, devtools: true*/,
-    });
-
-    appPage = context.appPage;
+    const urlsToOpen = {
+      // cnn: 'https://edition.cnn.com/', // Takes forever to load all the resources
+      hackerNews: 'https://news.ycombinator.com/',
+      duckduckgo: 'https://duckduckgo.com/',
+    };
+    const context = await bootstrap({ appUrls: urlsToOpen });
     browser = context.browser;
     extensionTarget = context.extensionTarget;
+    appPages = context.appPages;
   });
 
-  it('should bootstrap', async () => {
-    appPage;
+  it('should open up a bunch of tabs with some random sites (CNN, YouTube, certain YouTube videos, etc). Alternatively you can do this step manually and that is acceptable.', () => {
+    appPages;
     browser;
     extensionTarget;
-    expect('stuff').toBe('stuff');
+    expect(Object.keys(appPages)).toHaveLength(2);
+  });
+
+  it('should pick a page that the extension will inject an input field in, for example you can use https://duckduckgo.com/ site and inject a text input field that would look like <input type="text" id=“searchTerm” name=“searchTerm”>', () => {
+    expect(3).toBe(3);
+  });
+
+  it('should create a listener on that injected text field for the “Enter” key press.', () => {
+    expect(4).toBe(4);
+  });
+
+  it('should when the user presses the “Enter” key, the extension should take the text that is in this text box and search all the titles of the open tabs for any of them that contain the typed search term.', () => {
+    expect(5).toBe(5);
+  });
+
+  it('The first tab that is found to contain this search term, switch to it. As in that the matching tab should be displayed after the user types a search term and presses the enter key.', () => {
+    expect(6).toBe(6);
   });
 
   afterAll(async () => {

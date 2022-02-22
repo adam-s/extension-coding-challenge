@@ -3,11 +3,11 @@ import puppeteer from 'puppeteer';
 interface Options {
   devtools?: boolean;
   slowMo?: number;
-  appUrl: string;
+  appUrls?: Record<string, string>;
 }
 
 interface Bootstrap {
-  appPage: puppeteer.Page;
+  appPages: Record<string, puppeteer.Page>;
   browser: puppeteer.Browser;
   extensionTarget: puppeteer.Target;
 }
@@ -21,7 +21,7 @@ type LaunchOptions = puppeteer.LaunchOptions &
 
 export const bootstrap = async (options: Options): Promise<Bootstrap> => {
   try {
-    const { devtools = false, slowMo, appUrl } = options as Options;
+    const { devtools = false, slowMo, appUrls } = options as Options;
     const launchOptions: LaunchOptions = {
       headless: false,
       devtools,
@@ -30,9 +30,15 @@ export const bootstrap = async (options: Options): Promise<Bootstrap> => {
     };
     if (typeof slowMo !== 'undefined') Object.assign(launchOptions, { slowMo });
     const browser = await puppeteer.launch(launchOptions);
-
-    const appPage = await browser.newPage();
-    await appPage.goto(appUrl, { waitUntil: 'networkidle2' });
+    const appPages: { [key: string]: puppeteer.Page } = {};
+    if (appUrls) {
+      for await (const destination of Object.keys(appUrls)) {
+        appPages[destination] = await browser.newPage();
+        await appPages[destination].goto(appUrls[destination], {
+          waitUntil: 'load',
+        });
+      }
+    }
 
     const targets = browser.targets();
     const extensionTarget = targets.find(
@@ -42,7 +48,7 @@ export const bootstrap = async (options: Options): Promise<Bootstrap> => {
     if (!extensionTarget) throw new Error('Could not find extension target');
 
     return {
-      appPage,
+      appPages,
       browser,
       extensionTarget,
     };

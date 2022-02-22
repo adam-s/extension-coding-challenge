@@ -1,7 +1,8 @@
 type Result = { id: number; containsString: boolean };
 
 const setTitle = (text: string) => {
-  return document.title.includes(text.toLowerCase());
+  if (!document.title || typeof text !== 'string') return false;
+  return document.title.toLowerCase().includes(text.toLowerCase());
 };
 chrome.runtime.onMessage.addListener((event) => {
   if (event.type === 'enterpress') {
@@ -21,11 +22,15 @@ chrome.runtime.onMessage.addListener((event) => {
                 args: [text],
               },
               (value: any) => {
-                if (value && value[0])
-                  results.push({ id, containsString: value[0].result });
-                count--;
-                if (count === 0) {
-                  resolve(results);
+                if (!chrome.runtime.lastError?.message) {
+                  if (value && value[0])
+                    results.push({ id, containsString: value[0].result });
+                  count--;
+                  if (count === 0) {
+                    resolve(results);
+                  }
+                } else {
+                  console.warn(chrome.runtime.lastError.message);
                 }
               },
             );
@@ -37,8 +42,10 @@ chrome.runtime.onMessage.addListener((event) => {
       const tab = (await values).find(
         ({ containsString }: { containsString: boolean }) => containsString,
       );
+      console.log(chrome.runtime.lastError);
       const tabId = tab?.id;
       if (tabId) {
+        console.log(chrome.runtime.lastError);
         chrome.tabs.update(tabId, { active: true });
       }
     });

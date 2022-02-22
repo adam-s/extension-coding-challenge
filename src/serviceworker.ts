@@ -1,7 +1,7 @@
 type Result = { id: number; containsString: boolean };
 
 const setTitle = (text: string) => {
-  return document.title.includes(text);
+  return document.title.includes(text.toLowerCase());
 };
 chrome.runtime.onMessage.addListener((event) => {
   if (event.type === 'enterpress') {

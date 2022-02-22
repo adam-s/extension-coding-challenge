@@ -21,7 +21,7 @@ type LaunchOptions = puppeteer.LaunchOptions &
 
 export const bootstrap = async (options: Options): Promise<Bootstrap> => {
   try {
-    const { devtools = false, slowMo, appUrls } = options as Options;
+    const { devtools = true, slowMo, appUrls } = options as Options;
     const launchOptions: LaunchOptions = {
       headless: false,
       devtools,

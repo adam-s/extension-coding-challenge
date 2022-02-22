@@ -8,7 +8,8 @@ describe('Extension e2e', () => {
 
   beforeAll(async () => {
     const urlsToOpen = {
-      // cnn: 'https://edition.cnn.com/', // Takes forever to load all the resources
+      cnn: 'https://edition.cnn.com/', // Takes forever to load all the resources
+      stackOverflow: 'https://stackoverflow.com/',
       hackerNews: 'https://news.ycombinator.com/',
       duckduckgo: 'https://duckduckgo.com/',
     };
@@ -22,11 +23,13 @@ describe('Extension e2e', () => {
     appPages;
     browser;
     extensionTarget;
-    expect(Object.keys(appPages)).toHaveLength(2);
+    expect(Object.keys(appPages)).toHaveLength(4);
   });
 
-  it('should pick a page that the extension will inject an input field in, for example you can use https://duckduckgo.com/ site and inject a text input field that would look like <input type="text" id=“searchTerm” name=“searchTerm”>', () => {
-    expect(3).toBe(3);
+  it('should pick a page that the extension will inject an input field in, for example you can use https://duckduckgo.com/ site and inject a text input field that would look like <input type="text" id=“searchTerm” name=“searchTerm”>', async () => {
+    const cnn = appPages.stackOverflow;
+    const inputEl = await cnn.$('#searchTerm');
+    console.log(inputEl);
   });
 
   it('should create a listener on that injected text field for the “Enter” key press.', () => {

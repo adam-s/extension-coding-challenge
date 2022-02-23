@@ -1,10 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare namespace chrome.scripting {
-  export function executeScript<T>(args: unknown): T;
-}
-
-type Result = { id: number; result: boolean }[];
+import { MessageFromContent } from './common/types';
 
 const notEmpty = <TValue>(
   value: TValue | null | undefined,
@@ -18,17 +12,15 @@ const setTitle = (text: string) => {
   return document.title.toLowerCase().includes(text.toLowerCase());
 };
 
-chrome.runtime.onMessage.addListener((event) => {
-  if (event.type === 'enterpress') {
-    const text = event.payload;
+chrome.runtime.onMessage.addListener((event: MessageFromContent) => {
+  if (event.type === 'changeTab') {
+    const text = event.text;
     chrome.tabs.query({}, async (tabs) => {
       const values = await Promise.all(
         tabs.map(async ({ id }) => {
           if (!id) return null;
           try {
-            const value = await chrome.scripting.executeScript<
-              Promise<Result | null>
-            >({
+            const value = await chrome.scripting.executeScript({
               target: { tabId: id },
               func: setTitle,
               args: [text],

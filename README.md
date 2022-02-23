@@ -2,7 +2,7 @@
 
 Satisfies coding challenge requirements.
 
-## Create a chrome browser extension based on Manifest Version 3 that performs the following:
+## Create a chrome browser extension based on manifest Version 3 that performs the following
 
 1. Opens up a bunch of tabs with some random sites (CNN, YouTube, certain YouTube videos, etc). Alternatively you can do this step manually and that is acceptable.
 2. Pick a page that the extension will inject an input field in, for example you can use [https://duckduckgo.com](https://duckduckgo.com/) site and inject a text input field that would look like `<input type="text" id=“searchTerm” name=“searchTerm”>`
@@ -24,15 +24,18 @@ These address the major issues I faced previously developing a complicated chrom
       const worker = await extensionTarget?.worker();
       const tabs: globalThis.chrome.tabs.Tab[] | undefined =
         await worker?.evaluate(
+          // This code is run in the extension background service worker execution context 🔥🔥🔥
           () =>
             new Promise((resolve) =>
               chrome.tabs.query({ active: true, currentWindow: true }, resolve),
-            ),  // This code is run in the extension background service worker execution context where `chrome` is the `globalThis` 🔥🔥🔥
+            ),  
         );
       console.log(tabs);
       expect(tabs?.[0].title).toContain('Duck');
     });
   ```
+
+4. Use [TypeScript discriminating unions](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions) to limit the types of messages passed between frames of the extension. This simple solution solved one of the biggest difficulties developing extension managing extremely complex messaging. This technique can be found in an informative video, [Web Workers & TypeScript | Seattle TypeScript | 8/28/19](https://www.youtube.com/watch?v=ou5DNc4HXLQ), of a meetup talk on the subject.
 
 ### Install dependencies
 

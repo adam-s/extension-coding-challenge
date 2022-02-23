@@ -1,4 +1,5 @@
-import { waitForElement } from '../common/utils';
+import { MessageFromContent } from '../common/types';
+import { waitForElement, postMessage } from '../common/utils';
 
 (async function () {
   try {
@@ -17,7 +18,7 @@ import { waitForElement } from '../common/utils';
       inputElement.addEventListener('keypress', (event) => {
         if (event.code === 'Enter') {
           const text = inputElement.value;
-          chrome.runtime.sendMessage({ type: 'enterpress', payload: text });
+          postMessage<MessageFromContent>({ type: 'changeTab', text });
         }
       });
       const parentEl = document.querySelector('body') as HTMLElement;

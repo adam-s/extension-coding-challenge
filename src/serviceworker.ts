@@ -1,4 +1,10 @@
-type Result = { id: number; containsString: boolean };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-namespace
+declare namespace chrome.scripting {
+  export function executeScript<T>(args: unknown): T;
+}
+
+type Result = { id: number; result: boolean }[];
 
 const notEmpty = <TValue>(
   value: TValue | null | undefined,
@@ -22,13 +28,13 @@ chrome.runtime.onMessage.addListener((event) => {
           try {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
-            const value = await chrome.scripting.executeScript({
+            const value = await chrome.scripting.executeScript<Result | null>({
               target: { tabId: id },
               func: setTitle,
               args: [text],
             });
             if (value?.[0]?.result) {
-              return { id, containsString: value[0].result } as Result;
+              return { id, containsString: value[0].result };
             } else {
               return null;
             }

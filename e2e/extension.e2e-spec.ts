@@ -8,7 +8,7 @@ describe('Extension e2e', () => {
 
   beforeAll(async () => {
     const urlsToOpen = {
-      cnn: 'https://edition.cnn.com/', // Takes forever to load all the resources
+      // cnn: 'https://edition.cnn.com/', // Takes forever to load all the resources
       stackOverflow: 'https://stackoverflow.com/',
       hackerNews: 'https://news.ycombinator.com/',
       duckduckgo: 'https://duckduckgo.com/',
@@ -23,25 +23,37 @@ describe('Extension e2e', () => {
     appPages;
     browser;
     extensionTarget;
-    expect(Object.keys(appPages)).toHaveLength(4);
+    expect(Object.keys(appPages)).toHaveLength(3);
   });
 
   it('should pick a page that the extension will inject an input field in, for example you can use https://duckduckgo.com/ site and inject a text input field that would look like <input type="text" id=“searchTerm” name=“searchTerm”>', async () => {
-    const cnn = appPages.stackOverflow;
-    const inputEl = await cnn.$('#searchTerm');
-    console.log(inputEl);
+    const hackerNews = appPages.hackerNews;
+    const outerHTML = await hackerNews
+      .$('#searchTerm')
+      .then((handle) => handle?.getProperty('outerHTML'))
+      .then((outerHTML) => outerHTML?.jsonValue());
+    expect(outerHTML).toMatchSnapshot();
   });
 
-  it('should create a listener on that injected text field for the “Enter” key press.', () => {
-    expect(4).toBe(4);
+  it('should create a listener on that injected text field for the “Enter” key press.', async () => {
+    await expect(appPages.hackerNews).toFill(
+      'input[name="searchTerm"]',
+      'Duck',
+    );
+    await appPages.hackerNews.focus('input[name="searchTerm"]');
   });
 
-  it('should when the user presses the “Enter” key, the extension should take the text that is in this text box and search all the titles of the open tabs for any of them that contain the typed search term.', () => {
-    expect(5).toBe(5);
-  });
-
-  it('The first tab that is found to contain this search term, switch to it. As in that the matching tab should be displayed after the user types a search term and presses the enter key.', () => {
-    expect(6).toBe(6);
+  it('should when the user presses the “Enter” key, the extension should take the text that is in this text box and search all the titles of the open tabs for any of them that contain the typed search term.', async () => {
+    await appPages.hackerNews.keyboard.press('Enter');
+    const worker = await extensionTarget?.worker();
+    const tabs: globalThis.chrome.tabs.Tab[] | undefined =
+      await worker?.evaluate(
+        () =>
+          new Promise((resolve) =>
+            chrome.tabs.query({ active: true, currentWindow: true }, resolve),
+          ),
+      );
+    expect(tabs?.[0].title).toContain('Duck');
   });
 
   afterAll(async () => {

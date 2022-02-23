@@ -8,5 +8,6 @@
   },
   "testTimeout": 60000,
   "verbose": true,
-  "preset": "jest-puppeteer"
+  "preset": "jest-puppeteer",
+   "setupFilesAfterEnv": ["expect-puppeteer"]
 }

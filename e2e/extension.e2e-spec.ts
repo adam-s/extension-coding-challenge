@@ -13,7 +13,7 @@ describe('Extension e2e', () => {
       hackerNews: 'https://news.ycombinator.com/',
       duckduckgo: 'https://duckduckgo.com/',
     };
-    const context = await bootstrap({ appUrls: urlsToOpen });
+    const context = await bootstrap({ appUrls: urlsToOpen, slowMo: 200 });
     browser = context.browser;
     extensionTarget = context.extensionTarget;
     appPages = context.appPages;
@@ -36,11 +36,16 @@ describe('Extension e2e', () => {
   });
 
   it('should create a listener on that injected text field for the “Enter” key press.', async () => {
-    await expect(appPages.hackerNews).toFill(
-      'input[name="searchTerm"]',
-      'Duck',
-    );
+    await appPages.hackerNews.bringToFront();
     await appPages.hackerNews.focus('input[name="searchTerm"]');
+    await appPages.hackerNews.keyboard.type('Duck');
+    await appPages.hackerNews.waitForFunction(
+      `document.querySelector('input[name="searchTerm"').value === 'Duck'`,
+    );
+    const value = await appPages.hackerNews
+      .$('input[name="searchTerm"')
+      .then((handle) => handle?.getProperty('value'));
+    expect(await value?.jsonValue()).toBe('Duck');
   });
 
   it('should when the user presses the “Enter” key, the extension should take the text that is in this text box and search all the titles of the open tabs for any of them that contain the typed search term.', async () => {
@@ -53,6 +58,7 @@ describe('Extension e2e', () => {
             chrome.tabs.query({ active: true, currentWindow: true }, resolve),
           ),
       );
+    console.log(tabs);
     expect(tabs?.[0].title).toContain('Duck');
   });
 

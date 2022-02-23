@@ -26,9 +26,9 @@ chrome.runtime.onMessage.addListener((event) => {
         tabs.map(async ({ id }) => {
           if (!id) return null;
           try {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            const value = await chrome.scripting.executeScript<Result | null>({
+            const value = await chrome.scripting.executeScript<
+              Promise<Result | null>
+            >({
               target: { tabId: id },
               func: setTitle,
               args: [text],
@@ -39,6 +39,7 @@ chrome.runtime.onMessage.addListener((event) => {
               return null;
             }
           } catch (error) {
+            console.log(error);
             return null;
           }
         }),

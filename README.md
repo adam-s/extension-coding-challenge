@@ -1,72 +1,59 @@
-# TypeScript React Chrome Extension Boilerplate
+# Extension coding challenge
 
-A basic TypeScript React Chrome Extension boilerplate that gets you started quickly. It supports **TypeScript**, **JSX**, and **automatic reloading** during development. Jest, ESLint and Prettier included, all bundled using [Rollup](https://rollupjs.org/guide/en/) and [`rollup-plugin-chrome-extension`](https://extend-chrome.dev/rollup-plugin).
+Satisfies coding challenge requirements.
 
-## Get Started
+## Create a chrome browser extension based on Manifest Version 3 that performs the following:
 
-### Using `create-react-crx`
+1. Opens up a bunch of tabs with some random sites (CNN, YouTube, certain YouTube videos, etc). Alternatively you can do this step manually and that is acceptable.
+2. Pick a page that the extension will inject an input field in, for example you can use [https://duckduckgo.com](https://duckduckgo.com/) site and inject a text input field that would look like `<input type="text" id=“searchTerm” name=“searchTerm”>`
+3. Create a listener on that injected text field for the “Enter” key press.
+4. When the user presses the “Enter” key, the extension should take the text that is in this text box and search all the titles of the open tabs for any of them that contain the typed search term.
+5. The first tab that is found to contain this search term, switch to it. As in that the matching tab should be displayed after the user types a search term and presses the enter key.
 
-Type this into your terminal:
+## Features contained in the code
 
-```sh
-npx create-react-crx
-```
+These address the major issues I faced previously developing a complicated chrome extension including tooling with hot reload and automated testing.
 
-Follow the prompts to setup your Chrome extension project.
+1. [Uses rollup-plugin-chrome-extension](https://github.com/extend-chrome/rollup-plugin-chrome-extension) to bootstrap tooling for manifest v3 Chrome extension development with hot reload on code changes.
+2. Has a helper function `waitForElement` that emulates Puppeteers `waitForSelector` method when used in injected content scripts will wait for elements to exist before continuing the injected script code execution. Often 3rd party websites will override `window.onload` or `window.addEventListener('load', noop)` will not fire the callback on injected scripts. This features guarantees that an element will exist with a sensible timeout before continuing or throwing an error.
+3. e2e tests are built using Jest and Puppeteer. The compiled extension is installed in a browser instance using browser flags options. Puppeteer allows code evaluation access to the extension background service worker script for arbitrary code execution in the service worker execution context. The test code can sit on a server out in the cloud somewhere continuously insuring that the extension interacts correctly with uncontrolled 3rd party websites immediately sending notification by SMS or email if changes to 3rd party website break the extension. For example,
 
-### Using `git clone`
+  ```javascript
+    it('should when the user presses the “Enter” key, the extension should take the text that is in this text box and search all the titles of the open tabs for any of them that contain the typed search term.', async () => {
+      await appPages.hackerNews.keyboard.press('Enter');
+      const worker = await extensionTarget?.worker();
+      const tabs: globalThis.chrome.tabs.Tab[] | undefined =
+        await worker?.evaluate(
+          () =>
+            new Promise((resolve) =>
+              chrome.tabs.query({ active: true, currentWindow: true }, resolve),
+            ),  // This code is run in the extension background service worker execution context where `chrome` is the `globalThis` 🔥🔥🔥
+        );
+      console.log(tabs);
+      expect(tabs?.[0].title).toContain('Duck');
+    });
+  ```
 
-Type this into your terminal:
-
-```sh
-git clone https://github.com/extend-chrome/ts-react-boilerplate.git my-chrome-extension
-cd my-chrome-extension
-npm install
-```
-
-> 🖌️ Update your package name and version in `package.json` before you get started!
-
-### Development
-
-For development with automatic reloading:
-
-```sh
-npm run start
-```
-
-Open the [Extensions Dashboard](chrome://extensions), enable "Developer mode", click "Load unpacked", and choose the `dist` folder.
-
-When you make changes in `src` the background script and any content script will reload automatically.
-
-### Production
-
-When it's time to publish your Chrome extension, make a production build to submit to the Chrome Web Store. This boilerplate will use the version in `package.json`, unless you add a version to `src/manifest.json`.
-
-> Make sure you have updated the name and version of your extension in `package.json`.
-
-Run the following line:
+### Install dependencies
 
 ```sh
-npm run build
+yarn
 ```
 
-This will create a ZIP file with your package name and version in the `releases`
-folder.
+### Run in watch mode
 
-## Source Layout
+```sh
+yarn start
+```
 
-Your manifest is at `src/manifest.json`, and Rollup will bundle any files you
-include here. All the filepaths in your manifest should point to files in `src`.
+### Test end to end
 
-## Features
+```sh
+yarn test:e2e
+```
 
-- Uses Rollup to bundle your extension
-- Chrome Extension automatic reloader
-- Jest configuration for testing
+### Build and test end to end
 
-## Resources
-
-[Chrome Extension official documentation](https://developer.chrome.com/docs/webstore/)
-
-[How to Publish your extension step by step video tutorial](https://www.youtube.com/playlist?list=PLYlOQabA4Mm0bPiMKIBMgZK0u2jbYsrC6)
-
+```sh
+yarn test:build:e2e
+```

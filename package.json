@@ -26,7 +26,8 @@
     "release": "cross-env NODE_ENV=production rollup -c",
     "start": "rollup -c -w",
     "test": "jest",
-    "test:e2e": "jest --config ./e2e/jest-e2e.json --env=puppeteer"
+    "test:e2e": "jest --config ./e2e/jest-e2e.json --env=puppeteer",
+    "test:build:e2e": "yarn build & yarn test:e2e"
   },
   "dependencies": {
     "@rollup/plugin-replace": "^3.0.0",

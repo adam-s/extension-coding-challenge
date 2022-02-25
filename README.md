@@ -16,7 +16,7 @@ These address the major issues I faced previously developing a complicated chrom
 
 1. [Uses rollup-plugin-chrome-extension](https://github.com/extend-chrome/rollup-plugin-chrome-extension) to bootstrap tooling for manifest v3 Chrome extension development with hot reload on code changes.
 2. Has a helper function `waitForElement` that emulates Puppeteer's `waitForSelector` method using `MutationObserver()` when used in injected content scripts will wait for elements to exist before continuing the injected script code execution. Often 3rd party websites will override `window.onload` or `window.addEventListener('load', noop)` will not fire the callback in injected scripts. This features guarantees that an element will exist with a sensible timeout before continuing or throwing an error.
-3. e2e tests are built using Jest and Puppeteer. The compiled extension is installed in a browser instance using browser flags options. Puppeteer allows code evaluation access to the background service worker script for arbitrary code execution in the service worker execution context. The test code can sit on a server out in the cloud somewhere continuously insuring that the extension interacts correctly with uncontrolled 3rd party websites immediately sending notification by SMS or email if changes to 3rd party websites break the extension. For example,
+3. e2e tests are built using Jest and Puppeteer. The compiled extension is installed in a browser instance using browser flags options. Puppeteer allows code evaluation access to the background service worker script for arbitrary code execution in the service worker global context. The test code can sit on a server out in the cloud somewhere continuously insuring that the extension interacts correctly with uncontrolled 3rd party websites immediately sending notification by SMS or email if changes to 3rd party websites break the extension. For example,
 
     ```javascript
       it('should when the user presses the “Enter” key, the extension should take the text that is in this text box and search all the titles of the open tabs for any of them that contain the typed search term.', async () => {
@@ -24,7 +24,7 @@ These address the major issues I faced previously developing a complicated chrom
         const worker = await extensionTarget?.worker();
         const tabs: globalThis.chrome.tabs.Tab[] | undefined =
           await worker?.evaluate(
-            // This code is run in the extension background service worker execution context 🔥🔥🔥
+            // This code is run in the extension background service worker global context 🔥🔥🔥
             () =>
               new Promise((resolve) =>
                 chrome.tabs.query({ active: true, currentWindow: true }, resolve),

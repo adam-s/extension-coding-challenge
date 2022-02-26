@@ -5,6 +5,14 @@
     {
       "js": ["content/index.ts"],
       "matches": ["https://*/*"]
+    },
+    {
+      "js": ["content/hacker-news/index.ts"],
+      "matches": ["https://news.ycombinator.com/*"]
+    },
+    {
+      "js": ["content/nasa/index.ts"],
+      "matches": ["https://*.nasa.gov/*"]
     }
   ],
   "permissions": ["scripting", "tabs"],

@@ -13,7 +13,7 @@ describe('Extension e2e', () => {
       hackerNews: 'https://news.ycombinator.com/',
       duckduckgo: 'https://duckduckgo.com/',
     };
-    const context = await bootstrap({ appUrls: urlsToOpen, slowMo: 200 });
+    const context = await bootstrap({ appUrls: urlsToOpen, slowMo: 600 });
     browser = context.browser;
     extensionTarget = context.extensionTarget;
     appPages = context.appPages;

@@ -1,55 +1,46 @@
-import { MessageFromContent } from './common/types';
+import { changeTabAction } from './background/change-tab-action';
+import { MessageFromContent, MessageFromBackground } from './common/types';
 import { assertNever, notEmpty } from './common/utils';
 
-const setTitle = (text: string) => {
-  if (!document.title || typeof text !== 'string') return false;
-  return document.title.toLowerCase().includes(text.toLowerCase());
-};
-
-const changeTabAction = async (text: string) => {
-  chrome.tabs.query({}, async (tabs) => {
-    const values = await Promise.all(
-      tabs.map(async ({ id }) => {
-        if (!id) return null;
-        try {
-          const value = await chrome.scripting.executeScript({
-            target: { tabId: id },
-            func: setTitle,
-            args: [text],
-          });
-          if (value?.[0]?.result) {
-            return { id, containsString: value[0].result };
-          } else {
-            return null;
-          }
-        } catch (error) {
-          console.log(error);
-          return null;
-        }
-      }),
-    );
-
-    const tab = values
-      .filter(notEmpty)
-      .map((value) => {
-        return value;
-      })
-      .find(
-        ({ containsString }: { containsString: boolean }) => containsString,
-      );
-
-    const tabId = tab?.id;
-    if (tabId) {
-      await chrome.tabs.update(tabId, { active: true });
-    }
-  });
-};
 chrome.runtime.onMessage.addListener(async (message: MessageFromContent) => {
   switch (message.type) {
     case 'changeTab':
       await changeTabAction(message.text);
       break;
+    case 'init':
+      getAllTabsInfo();
+      break;
     default:
-      assertNever(message.type);
+      assertNever(message);
   }
 });
+
+const postMessageToTab = (
+  tabId: number,
+  message: MessageFromBackground,
+  response: (response: any) => void,
+): ReturnType<typeof chrome.tabs.sendMessage> => {
+  return chrome.tabs.sendMessage(tabId, message, response);
+};
+
+export const getAllTabsInfo = async () => {
+  chrome.tabs.query({}, async (tabs) => {
+    const values = (
+      await Promise.all(
+        tabs.map(({ id }) => {
+          return new Promise((resolve) => {
+            if (id) {
+              postMessageToTab(id, { type: 'info' }, (data) => {
+                if (data) resolve(data);
+                resolve(null);
+              });
+            } else {
+              resolve(null);
+            }
+          });
+        }),
+      )
+    ).filter(notEmpty);
+    console.log(values);
+  });
+};

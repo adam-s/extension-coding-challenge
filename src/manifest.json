@@ -11,11 +11,20 @@
       "matches": ["https://news.ycombinator.com/*"]
     },
     {
+      "js": ["content/google-docs/index.ts"],
+      "matches": ["https://docs.google.com/document/*"]
+    },
+    {
       "js": ["content/nasa/index.ts"],
       "matches": ["https://*.nasa.gov/*"]
     }
   ],
-  "permissions": ["scripting", "tabs"],
+  "action": { "default_popup": "pages/popup/index.html" },
+  "web_accessible_resources": [{
+    "resources": ["/common/fonts/roboto/Roboto-Regular.ttf"],
+    "matches": ["<all_urls>"]
+  }],
+  "permissions": ["scripting", "tabs", "storage"],
   "host_permissions": [
     "https://*/*/"
   ]

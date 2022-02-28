@@ -1,0 +1,19 @@
+#UNIQUE-NAMESPACE-modal {
+  width: 300px;
+  height: 200px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  text-align: center;
+  background: white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  cursor: move;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .form-button {
+    margin: 0;
+  }
+}

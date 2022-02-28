@@ -8,7 +8,7 @@ chrome.runtime.onMessage.addListener(async (message: MessageFromContent) => {
       await changeTabAction(message.text);
       break;
     case 'init':
-      getAllTabsInfo();
+      await getAllTabsInfo();
       break;
     default:
       assertNever(message);
@@ -31,7 +31,7 @@ export const getAllTabsInfo = async () => {
           return new Promise((resolve) => {
             if (id) {
               postMessageToTab(id, { type: 'info' }, (data) => {
-                if (data) resolve(data);
+                if (!chrome.runtime.lastError && data) resolve(data);
                 resolve(null);
               });
             } else {
@@ -42,5 +42,6 @@ export const getAllTabsInfo = async () => {
       )
     ).filter(notEmpty);
     console.log(values);
+    return values;
   });
 };

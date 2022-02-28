@@ -24,18 +24,18 @@ export class Modal {
     this._startPosition = { x: defaultX, y: defaultY };
     this._modal.style.transform = `translate(${defaultX}px, ${defaultY}px)`;
     this._modal.append(this._content);
+    // This has to be added to the body before it has width and height
+    document.body.prepend(this._modal);
     const bounds = this._modal.getBoundingClientRect();
     const bodyBounds = document.body.getBoundingClientRect();
     this._windowSize = {
       width: bodyBounds.width - bounds.width,
       height: bodyBounds.height - bounds.height,
     };
-
+    console.log(this._windowSize);
     this._modal.addEventListener('mousedown', this._handleMouseDown, false);
     this._modal.addEventListener('mouseup', this._handleMouseUp, false);
     this._modal.addEventListener('mouseleave', this._handleMouseUp, false);
-
-    document.body.prepend(this._modal);
   }
 
   _getTranslate(): { x: number; y: number } {
@@ -67,9 +67,9 @@ export class Modal {
       this._lastUpdateCall = requestAnimationFrame(() => {
         const x =
           event.clientX - this._startPosition.x + this._currentPosition.x;
+
         const moveX =
           x < 0 ? 0 : x > this._windowSize.width ? this._windowSize.width : x;
-
         const y =
           event.clientY - this._startPosition.y + this._currentPosition.y;
         const moveY =

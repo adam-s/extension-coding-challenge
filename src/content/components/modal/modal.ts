@@ -27,12 +27,10 @@ export class Modal {
     // This has to be added to the body before it has width and height
     document.body.prepend(this._modal);
     const bounds = this._modal.getBoundingClientRect();
-    const bodyBounds = document.body.getBoundingClientRect();
     this._windowSize = {
-      width: bodyBounds.width - bounds.width,
-      height: bodyBounds.height - bounds.height,
+      width: window.innerWidth - bounds.width,
+      height: window.innerHeight - bounds.height,
     };
-    console.log(this._windowSize);
     this._modal.addEventListener('mousedown', this._handleMouseDown, false);
     this._modal.addEventListener('mouseup', this._handleMouseUp, false);
     this._modal.addEventListener('mouseleave', this._handleMouseUp, false);

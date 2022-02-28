@@ -1,6 +1,6 @@
 import { EventDispatcher } from '../utils/event-dispatcher';
 
-export class Controller {
+export class Emitter {
   public events: EventDispatcher = new EventDispatcher();
   get on() {
     return this.events.on.bind(this.events);

@@ -1,4 +1,3 @@
-import { Controller } from '../common/mvc/controller';
 import {
   Command,
   MessageFromBackground,
@@ -11,9 +10,10 @@ interface Service<T> {
   model: ContentModel<T>;
 }
 
-export class ContentController<T> extends Controller {
-  constructor(public service: Service<T>) {
-    super();
+interface View {}
+
+export class ContentController<T> {
+  constructor(public service: Service<T>, public view?: View) {
     this._wireListeners();
   }
 

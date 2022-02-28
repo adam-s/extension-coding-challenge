@@ -32,8 +32,8 @@ export class Modal {
       height: window.innerHeight - bounds.height,
     };
     this._modal.addEventListener('mousedown', this._handleMouseDown, false);
-    this._modal.addEventListener('mouseup', this._handleMouseUp, false);
-    this._modal.addEventListener('mouseleave', this._handleMouseUp, false);
+    window.addEventListener('mouseup', this._handleMouseUp, false);
+    // this._modal.addEventListener('mouseleave', this._handleMouseUp, false);
   }
 
   _getTranslate(): { x: number; y: number } {

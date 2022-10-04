@@ -33,7 +33,11 @@
     "@rollup/plugin-replace": "^3.0.0",
     "@types/chrome": "^0.0.178",
     "@types/firefox-webext-browser": "^94.0.1",
+    "@types/react": "^17.0.0",
+    "@types/react-beautiful-dnd": "^13.1.2",
+    "@types/react-dom": "^17.0.0",
     "prettier": "^2.2.1",
+    "react-beautiful-dnd": "^13.1.0",
     "webextension-polyfill": "^0.8.0"
   },
   "devDependencies": {
@@ -57,6 +61,8 @@
     "jshint": "^2.13.4",
     "postcss": "^8.4.7",
     "puppeteer": "^13.4.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "rollup": "^2.56.3",
     "rollup-plugin-chrome-extension": "^3.6.1",
     "rollup-plugin-empty-dir": "^1.0.5",

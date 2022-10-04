@@ -11,7 +11,7 @@
       "matches": ["https://news.ycombinator.com/*"]
     },
     {
-      "js": ["content/google-docs/index.ts"],
+      "js": ["content/google-docs/index.ts", "tabs/index.tsx"],
       "matches": ["https://docs.google.com/document/*"]
     },
     {

@@ -24,6 +24,11 @@ describe('Extension e2e', () => {
     browser;
     extensionTarget;
     expect(Object.keys(appPages)).toHaveLength(3);
+
+    const targets = browser
+      .targets()
+      .filter((target) => target.type() === 'page');
+    console.log(targets);
   });
 
   it('should pick a page that the extension will inject an input field in, for example you can use https://duckduckgo.com/ site and inject a text input field that would look like <input type="text" id=“searchTerm” name=“searchTerm”>', async () => {
@@ -60,6 +65,7 @@ describe('Extension e2e', () => {
       );
     console.log(tabs);
     expect(tabs?.[0].title).toContain('Duck');
+    console.log(browser._targets);
   });
 
   afterAll(async () => {
